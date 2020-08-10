@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final bloc = BlocProvider.of<VideosBloc>(context);
+
     return Scaffold(
       backgroundColor: Colors.black87,
       appBar: AppBar(
@@ -28,26 +30,39 @@ class HomeScreen extends StatelessWidget {
                 String result =
                     await showSearch(context: context, delegate: DataSearch());
                 if (result != null) {
-                  BlocProvider.of<VideosBloc>(context).inSearch.add(result);
+                  bloc.inSearch.add(result);
                 }
               })
         ],
       ),
       body: StreamBuilder(
-        stream: BlocProvider.of<VideosBloc>(context).outVideos,
-        builder: (context, snapshot){
-          if(snapshot.hasData){
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index){
-                return VideoTile(snapshot.data[index]);
-              }
-              );
-          } else {
-            return Container();
-          }
-        }
-        ),
+        initialData: [],
+          stream: bloc.outVideos,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.data.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index < snapshot.data.length) {
+                      return VideoTile(snapshot.data[index]);
+                    } else if(index > 1) {
+                      bloc.inSearch.add(null);
+                      return Container(
+                        height: 40.0,
+                        width: 40.0,
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  });
+            } else {
+              return Container();
+            }
+          }),
     );
   }
 }
