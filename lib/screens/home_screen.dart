@@ -3,13 +3,13 @@ import 'package:favoritos_youtube/blocs/favorite_bloc.dart';
 import 'package:favoritos_youtube/blocs/videos_bloc.dart';
 import 'package:favoritos_youtube/delegates/data_search.dart';
 import 'package:favoritos_youtube/models/video.dart';
+import 'package:favoritos_youtube/screens/favorites_screen.dart';
 import 'package:favoritos_youtube/widgets/video_tile.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     final bloc = BlocProvider.of<VideosBloc>(context);
 
     return Scaffold(
@@ -24,28 +24,29 @@ class HomeScreen extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: StreamBuilder<Map<String, Video>>(
-              stream: BlocProvider.of<FavoriteBloc>(context).outFav,
-              initialData: {},
-              builder: (context, snaphot){
-                if(snaphot.hasData){
-                  return Text("${snaphot.data.length}");
-                } else {
-                  return Container();
-                }
-              }
-              ),
+                stream: BlocProvider.of<FavoriteBloc>(context).outFav,
+                initialData: {},
+                builder: (context, snaphot) {
+                  if (snaphot.hasData) {
+                    return Text("${snaphot.data.length}");
+                  } else {
+                    return Container();
+                  }
+                }),
           ),
           IconButton(
             icon: Icon(Icons.star),
-            onPressed: (){
-            
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => FavoritesScreen()));
             },
           ),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
-              String result = await showSearch(context: context, delegate: DataSearch());
-              if(result != null) bloc.inSearch.add(result);
+              String result =
+                  await showSearch(context: context, delegate: DataSearch());
+              if (result != null) bloc.inSearch.add(result);
             },
           )
         ],
@@ -53,20 +54,21 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.black87,
       body: StreamBuilder(
           stream: bloc.outVideos,
-          initialData: [],
-          builder: (context, snapshot){
-            if(snapshot.hasData)
+          builder: (context, snapshot) {
+            if (snapshot.hasData)
               return ListView.builder(
-                itemBuilder: (context, index){
-                  if(index < snapshot.data.length){
+                itemBuilder: (context, index) {
+                  if (index < snapshot.data.length) {
                     return VideoTile(snapshot.data[index]);
-                  } else if (index > 1){
+                  } else if (index > 1) {
                     bloc.inSearch.add(null);
                     return Container(
                       height: 40,
                       width: 40,
                       alignment: Alignment.center,
-                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.red),),
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                      ),
                     );
                   } else {
                     return Container();
@@ -76,8 +78,7 @@ class HomeScreen extends StatelessWidget {
               );
             else
               return Container();
-          }
-      ),
+          }),
     );
   }
 }
