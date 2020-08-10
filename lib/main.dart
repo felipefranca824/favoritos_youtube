@@ -1,9 +1,10 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:favoritos_youtube/api.dart';
+import 'package:favoritos_youtube/blocs/videos_bloc.dart';
 import 'package:favoritos_youtube/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-
   Api api = Api();
   api.search('lanches');
 
@@ -13,10 +14,12 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    );
+    return BlocProvider(
+        bloc: VideosBloc(),
+        child: MaterialApp(
+          title: 'FlutterTube',
+          debugShowCheckedModeBanner: false,
+          home: HomeScreen(),
+        ));
   }
 }
-
