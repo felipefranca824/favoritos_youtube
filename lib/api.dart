@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:favoritos_youtube/models/video.dart';
 import 'package:http/http.dart' as http;
 
-const API_KEY = "AIzaSyBk7Xr-_R6QbJoBZoE2-NTFoCyM7a3z14k";
+const API_KEY = "AIzaSyDFTLZwAPBVFsM5dM9oXvQZvREU2NiSmt0";
 
 class Api {
-
   String _search;
   String _nextToken;
 
@@ -29,15 +28,15 @@ class Api {
     if (response.statusCode == 200) {
       var decoded = json.decode(response.body);
 
-      _nextToken = decoded['nextPageToken'];
+      _nextToken = decoded["nextPageToken"];
 
-      List<Video> videos = decoded['items'].map<Video>((map) {
+      List<Video> videos = decoded["items"].map<Video>((map) {
         return Video.fromJson(map);
       }).toList();
 
       return videos;
     } else {
-      throw Exception('Failed to load videos');
+      throw Exception("Failed to load videos");
     }
   }
 }
