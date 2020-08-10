@@ -1,12 +1,14 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:favoritos_youtube/blocs/videos_bloc.dart';
 import 'package:favoritos_youtube/delegates/data_search.dart';
+import 'package:favoritos_youtube/widgets/video_tile.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black87,
       appBar: AppBar(
         title: Container(
           height: 25,
@@ -36,7 +38,10 @@ class HomeScreen extends StatelessWidget {
         builder: (context, snapshot){
           if(snapshot.hasData){
             return ListView.builder(
-              itemBuilder: null
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index){
+                return VideoTile(snapshot.data[index]);
+              }
               );
           } else {
             return Container();
